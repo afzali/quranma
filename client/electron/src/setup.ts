@@ -85,7 +85,12 @@ export class ElectronCapacitorApp {
 
   // Helper function to load in the app.
   private async loadMainWindow(thisRef: any) {
-    await thisRef.loadWebApp(thisRef.MainWindow);
+    if (thisRef.CapacitorFileConfig.server?.url) {
+      // In dev mode, load from the Vite dev server URL
+      await thisRef.MainWindow.loadURL(thisRef.CapacitorFileConfig.server.url);
+    } else {
+      await thisRef.loadWebApp(thisRef.MainWindow);
+    }
   }
 
   // Expose the mainWindow ref for use outside of the class.
@@ -191,7 +196,7 @@ export class ElectronCapacitorApp {
       }
     });
     this.MainWindow.webContents.on('will-navigate', (event, _newURL) => {
-      if (!this.MainWindow.webContents.getURL().includes(this.customScheme)) {
+      if (!this.MainWindow.webContents.getURL().includes(this.customScheme) && !electronIsDev) {
         event.preventDefault();
       }
     });
@@ -225,7 +230,7 @@ export function setupContentSecurityPolicy(customScheme: string): void {
         ...details.responseHeaders,
         'Content-Security-Policy': [
           electronIsDev
-            ? `default-src ${customScheme}://* 'unsafe-inline' devtools://* 'unsafe-eval' data:`
+            ? `default-src ${customScheme}://* http://localhost:* 'unsafe-inline' devtools://* 'unsafe-eval' data:`
             : `default-src ${customScheme}://* 'unsafe-inline' data:`,
         ],
       },

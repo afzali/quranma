@@ -7,7 +7,7 @@ const electron = require('electron');
 let child = null;
 const isWin = process.platform === 'win32';
 const npmCmd = isWin ? 'npm.cmd' : 'npm';
-const spawnOpts = isWin ? { shell: true } : {};
+const shellOpts = isWin ? { shell: true } : {};
 const reloadWatcher = {
   debouncer: null,
   ready: false,
@@ -18,7 +18,7 @@ const reloadWatcher = {
 ///*
 function runBuild() {
   return new Promise((resolve, _reject) => {
-    let tempChild = cp.spawn(npmCmd, ['run', 'build'], spawnOpts);
+    let tempChild = cp.spawn(npmCmd, ['run', 'build'], shellOpts);
     tempChild.once('exit', () => {
       resolve();
     });
@@ -34,13 +34,14 @@ async function spawnElectron() {
     child = null;
     await runBuild();
   }
-  child = cp.spawn(electron, ['--inspect=5858', './'], spawnOpts);
-  child.on('exit', () => {
+  child = cp.spawn(electron, ['--inspect=5858', './']);
+  child.on('exit', (code) => {
     if (!reloadWatcher.restarting) {
-      process.exit(0);
+      process.exit(code);
     }
   });
   child.stdout.pipe(process.stdout);
+  child.stderr.pipe(process.stderr);
 }
 
 function setupReloadWatcher() {

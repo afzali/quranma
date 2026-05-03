@@ -82,6 +82,8 @@ export async function initCourseContext(): Promise<void> {
 	}
 }
 
+import { clearHighlightsForCourseSwitch } from '$lib/services/highlight-service';
+
 /**
  * Switch to a different course.
  * Persists the active course ID to APP_SETTINGS.
@@ -90,6 +92,7 @@ export async function switchCourse(courseId: number): Promise<void> {
 	const course = allCourses.find((c) => c.id === courseId);
 	if (!course) return;
 
+	clearHighlightsForCourseSwitch();
 	activeCourse = course;
 	await setSetting('active_course_id', String(courseId));
 }

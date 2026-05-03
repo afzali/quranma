@@ -1,6 +1,7 @@
 import type { DatabaseAdapter } from '../database-adapter';
 import initialSql from './001-initial.sql?raw';
 import coursesSql from './002-courses.sql?raw';
+import analysisSql from './003-analysis.sql?raw';
 
 interface Migration {
 	version: number;
@@ -22,6 +23,10 @@ export const migrations: Migration[] = [
 	{
 		version: 2,
 		sql: coursesSql
+	},
+	{
+		version: 3,
+		sql: analysisSql
 	}
 ];
 

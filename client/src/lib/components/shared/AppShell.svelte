@@ -2,7 +2,7 @@
 	import { PaneGroup, Pane, PaneResizer } from 'paneforge';
 	import { isRtl } from '$lib/utils/rtl-context.svelte.js';
 	import { getIsMobile, setIsMobile } from '$lib/state/ui-context.svelte';
-	import AnalysisPlaceholder from './AnalysisPlaceholder.svelte';
+	import AnalysisTabs from '$lib/components/analysis/AnalysisTabs.svelte';
 	import MobileOverlay from './MobileOverlay.svelte';
 	import QuranDisplay from '$lib/components/quran/QuranDisplay.svelte';
 	import NavigationBar from '$lib/components/navigation/NavigationBar.svelte';
@@ -35,7 +35,7 @@
 
 		<MobileOverlay>
 			{#snippet analysisContent()}
-				<AnalysisPlaceholder />
+				<AnalysisTabs />
 			{/snippet}
 			{#snippet navigationContent()}
 				<NavigationBar />
@@ -46,7 +46,7 @@
 		<PaneGroup direction="horizontal" autoSaveId="quran-ma-layout">
 			<!-- Analysis Panel (Left in DOM, visually left in LTR / right in RTL) -->
 			<Pane defaultSize={25} minSize={15} collapsible collapsedSize={0}>
-				<AnalysisPlaceholder />
+				<AnalysisTabs />
 			</Pane>
 			<PaneResizer class="w-1.5 bg-border hover:bg-primary/20 transition-colors" />
 

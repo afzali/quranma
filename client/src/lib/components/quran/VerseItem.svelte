@@ -11,6 +11,7 @@
 		type TopicRow
 	} from '$lib/data/repositories/topic-repository';
 	import { getActiveCourseId } from '$lib/state/course-context.svelte';
+	import { getVerseHighlight } from '$lib/state/highlight-context.svelte';
 	import { toArabicIndic } from '$lib/utils/quran-utils';
 	import { t } from '$lib/i18n';
 
@@ -28,6 +29,11 @@
 	let courseId = $derived(getActiveCourseId());
 	let showTopicMenu = $state(false);
 	let topics = $state<TopicRow[]>([]);
+
+	// Highlight integration
+	let highlight = $derived(getVerseHighlight(verse.surahNumber, verse.verseNumber));
+	let siyaqBg = $derived(highlight?.siyaqColor ?? null);
+	let nazmKaviActive = $derived(highlight?.nazmKaviActive ?? false);
 
 	$effect(() => {
 		const cid = courseId;
@@ -97,7 +103,8 @@
 		type="button"
 		class="w-full text-start rounded-md px-3 py-2 transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring {isSelected
 			? 'bg-accent'
-			: ''}"
+			: ''} {nazmKaviActive ? 'border-s-4 border-primary' : ''}"
+		style={siyaqBg && !isSelected ? `background-color: ${siyaqBg}20` : ''}
 		onclick={handleClick}
 		aria-label="Verse {verse.verseNumber}"
 		aria-pressed={isSelected}
