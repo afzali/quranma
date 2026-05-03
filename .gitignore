@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+client/build/
+client/.svelte-kit/
+client/android/
+client/electron/dist/
+
+# Environment files
+.env
+.env.local
+server/.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+server/logs/
+
+# Capacitor
+client/android/app/build/
+client/electron/build/
