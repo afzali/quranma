@@ -2,7 +2,7 @@
 
 ## Task 1: Database Migration 002 — Course Tables
 
-- [ ] 1.1 Create `src/lib/data/migrations/002-courses.sql` with CREATE TABLE statements for COURSE, BOOKMARK, TOPIC, TOPIC_VERSE, and COURSE_SETTINGS tables including foreign keys, unique constraints, and indexes
+- [x] 1.1 Create `src/lib/data/migrations/002-courses.sql` with CREATE TABLE statements for COURSE, BOOKMARK, TOPIC, TOPIC_VERSE, and COURSE_SETTINGS tables including foreign keys, unique constraints, and indexes
 - [ ] 1.2 Update `src/lib/data/migrations/index.ts` to register migration 002 in the migrations array
 - [ ] 1.3 Verify migration runs successfully on app startup by checking that all five tables are created and db_version is updated to 2
 
