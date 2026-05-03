@@ -1,0 +1,19 @@
+<script>
+	import { cnRtl } from "$lib/utils/rtl-utils.js";
+
+	let {
+		ref = $bindable(null),
+		class: className,
+		children,
+		...restProps
+	} = $props();
+</script>
+
+<div
+	bind:this={ref}
+	data-slot="alert-dialog-header"
+	class={cnRtl("flex flex-col gap-2 text-center sm:text-left", className)}
+	{...restProps}
+>
+	{@render children?.()}
+</div>
