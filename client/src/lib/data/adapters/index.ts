@@ -1,18 +1,24 @@
 import { Capacitor } from '@capacitor/core';
 import type { DatabaseAdapter } from '../database-adapter';
 import { CapacitorSQLiteAdapter } from './capacitor-sqlite-adapter';
+import { BetterSqliteAdapter } from './better-sqlite-adapter';
 
 /**
  * Factory function that selects the appropriate DatabaseAdapter
  * based on the current Capacitor platform.
  *
- * - Electron, Android, iOS → CapacitorSQLiteAdapter
+ * - Electron → BetterSqliteAdapter (uses better-sqlite3 via IPC)
+ * - Android, iOS → CapacitorSQLiteAdapter
  * - Web → not yet implemented (future: wa-sqlite or sql.js adapter)
  */
 export function createAdapter(): DatabaseAdapter {
 	const platform = Capacitor.getPlatform();
 
-	if (platform === 'electron' || platform === 'android' || platform === 'ios') {
+	if (platform === 'electron') {
+		return new BetterSqliteAdapter();
+	}
+
+	if (platform === 'android' || platform === 'ios') {
 		return new CapacitorSQLiteAdapter();
 	}
 

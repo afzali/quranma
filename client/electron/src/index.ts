@@ -7,9 +7,14 @@ import unhandled from 'electron-unhandled';
 import { autoUpdater } from 'electron-updater';
 
 import { ElectronCapacitorApp, setupContentSecurityPolicy, setupReloadWatcher } from './setup';
+import { registerSqliteIpcHandlers } from './better-sqlite-ipc';
 
 // Graceful handling of unhandled errors.
 unhandled();
+
+// Register better-sqlite3 IPC handlers before any windows are created.
+// This enables the renderer process to use the BetterSqliteAdapter via IPC.
+registerSqliteIpcHandlers();
 
 // Define our menu templates (these are optional)
 const trayMenuTemplate: (MenuItemConstructorOptions | MenuItem)[] = [new MenuItem({ label: 'Quit App', role: 'quit' })];

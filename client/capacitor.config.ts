@@ -11,6 +11,14 @@ const config: CapacitorConfig = {
     // Electron will load http://localhost:5173 instead of the static build,
     // enabling Vite's Hot Module Replacement for live code changes.
     ...(isDev ? { url: 'http://localhost:5173', cleartext: true } : {})
+  },
+  plugins: {
+    CapacitorSQLite: {
+      electronIsEncryption: false,
+      electronMacLocation: 'Databases',
+      electronWindowsLocation: 'Databases',
+      electronLinuxLocation: 'Databases'
+    }
   }
 };
 
