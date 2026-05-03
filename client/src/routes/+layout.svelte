@@ -5,6 +5,7 @@
 	import RtlProvider from '$lib/components/ui-rtl/rtl-provider.svelte';
 	import { getDirection, getLocale } from '$lib/state/i18n-context.svelte';
 	import { initDatabase } from '$lib/data/database';
+	import { initCourseContext } from '$lib/state/course-context.svelte';
 	import { restoreSelection } from '$lib/state/selection-context.svelte';
 
 	let { children } = $props();
@@ -18,6 +19,7 @@
 	onMount(async () => {
 		try {
 			await initDatabase();
+			await initCourseContext();
 			await restoreSelection();
 			ready = true;
 		} catch (e) {

@@ -1,7 +1,13 @@
 // Selection Context — reactive state for the currently active Surah/Verse selection
 // Uses Svelte 5 runes for reactivity
 
-import { getLastSelection, saveLastSelection } from '$lib/data/repositories/settings-repository';
+import {
+	getLastSelection,
+	saveLastSelection,
+	getCourseSelection,
+	saveCourseSelection
+} from '$lib/data/repositories/settings-repository';
+import { getActiveCourseId } from '$lib/state/course-context.svelte';
 
 export type Selection = {
 	surahNumber: number;
@@ -57,11 +63,24 @@ export function isVerseLevelSelection(): boolean {
 }
 
 /**
- * Restore the last selection from APP_SETTINGS.
- * Falls back to Surah 1 if no previous selection exists.
+ * Restore the last selection.
+ * Reads from COURSE_SETTINGS for the active course, falling back to
+ * APP_SETTINGS (legacy) and then Surah 1.
  */
 export async function restoreSelection(): Promise<void> {
 	try {
+		const courseId = getActiveCourseId();
+		if (courseId) {
+			const courseSel = await getCourseSelection(courseId);
+			if (courseSel) {
+				selection = {
+					surahNumber: courseSel.lastSurah,
+					verseNumber: courseSel.lastVerse
+				};
+				return;
+			}
+		}
+		// Fallback to legacy APP_SETTINGS
 		const last = await getLastSelection();
 		selection = {
 			surahNumber: last.surahNumber,
@@ -74,10 +93,17 @@ export async function restoreSelection(): Promise<void> {
 }
 
 /**
- * Persist the current selection to APP_SETTINGS.
+ * Persist the current selection.
+ * Writes to COURSE_SETTINGS for the active course, and also to
+ * APP_SETTINGS as a legacy fallback.
  */
 async function persistSelection(): Promise<void> {
 	try {
+		const courseId = getActiveCourseId();
+		if (courseId) {
+			await saveCourseSelection(courseId, selection.surahNumber, selection.verseNumber);
+		}
+		// Also save to legacy APP_SETTINGS for backward compatibility
 		await saveLastSelection(selection.surahNumber, selection.verseNumber);
 	} catch (e) {
 		console.error('Failed to persist selection:', e);

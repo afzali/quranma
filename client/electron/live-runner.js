@@ -5,7 +5,9 @@ const chokidar = require('chokidar');
 const electron = require('electron');
 
 let child = null;
-const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const isWin = process.platform === 'win32';
+const npmCmd = isWin ? 'npm.cmd' : 'npm';
+const spawnOpts = isWin ? { shell: true } : {};
 const reloadWatcher = {
   debouncer: null,
   ready: false,
@@ -16,7 +18,7 @@ const reloadWatcher = {
 ///*
 function runBuild() {
   return new Promise((resolve, _reject) => {
-    let tempChild = cp.spawn(npmCmd, ['run', 'build']);
+    let tempChild = cp.spawn(npmCmd, ['run', 'build'], spawnOpts);
     tempChild.once('exit', () => {
       resolve();
     });
@@ -32,7 +34,7 @@ async function spawnElectron() {
     child = null;
     await runBuild();
   }
-  child = cp.spawn(electron, ['--inspect=5858', './']);
+  child = cp.spawn(electron, ['--inspect=5858', './'], spawnOpts);
   child.on('exit', () => {
     if (!reloadWatcher.restarting) {
       process.exit(0);

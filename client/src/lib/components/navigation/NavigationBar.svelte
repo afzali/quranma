@@ -1,12 +1,16 @@
 <script lang="ts">
-	import TableOfContents from './TableOfContents.svelte';
+	import CourseSwitcher from './CourseSwitcher.svelte';
+	import NavigationTabs from './NavigationTabs.svelte';
 	import LanguageSwitcher from './LanguageSwitcher.svelte';
 </script>
 
 <div class="flex flex-col h-full">
-	<!-- Table of Contents takes up most of the space -->
+	<!-- Course switcher at the top -->
+	<CourseSwitcher />
+
+	<!-- Tabbed navigation panels -->
 	<div class="flex-1 overflow-hidden">
-		<TableOfContents />
+		<NavigationTabs />
 	</div>
 
 	<!-- Language switcher at the bottom -->

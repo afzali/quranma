@@ -55,3 +55,38 @@ export async function saveLastSelection(
 		await setSetting('last_selection_verse', '');
 	}
 }
+
+/**
+ * Get the saved selection for a specific course from COURSE_SETTINGS.
+ */
+export async function getCourseSelection(
+	courseId: number
+): Promise<{ lastSurah: number; lastVerse: number | null } | null> {
+	const db = getDb();
+	const rows = await db.query<{ last_surah: number | null; last_verse: number | null }>(
+		'SELECT last_surah, last_verse FROM COURSE_SETTINGS WHERE course_id = ?',
+		[courseId]
+	);
+	if (rows.length === 0 || rows[0].last_surah == null) return null;
+	return {
+		lastSurah: rows[0].last_surah,
+		lastVerse: rows[0].last_verse ?? null
+	};
+}
+
+/**
+ * Save the current selection for a specific course to COURSE_SETTINGS.
+ */
+export async function saveCourseSelection(
+	courseId: number,
+	surahNumber: number,
+	verseNumber: number | null
+): Promise<void> {
+	const db = getDb();
+	await db.run(
+		`INSERT INTO COURSE_SETTINGS (course_id, last_surah, last_verse)
+		 VALUES (?, ?, ?)
+		 ON CONFLICT(course_id) DO UPDATE SET last_surah = excluded.last_surah, last_verse = excluded.last_verse`,
+		[courseId, surahNumber, verseNumber]
+	);
+}

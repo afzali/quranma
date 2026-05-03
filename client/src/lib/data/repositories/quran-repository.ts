@@ -191,6 +191,46 @@ function mapAyahRow(row: AyahRow): Verse {
 	};
 }
 
+// ── Search ────────────────────────────────────────────────────
+
+export interface VerseSearchResult {
+	surahNumber: number;
+	surahNameArabic: string;
+	verseNumber: number;
+	textArabic: string;
+	textSimple: string;
+}
+
+/**
+ * Search verses by text using SQL LIKE on text_original and text_simple.
+ * Joins with surah table for Surah names.
+ */
+export async function searchVersesInDb(query: string): Promise<VerseSearchResult[]> {
+	const db = getDb();
+	const pattern = `%${query}%`;
+	const rows = await db.query<{
+		surah_id: number;
+		name_ar: string;
+		ayah_number: number;
+		text_original: string;
+		text_simple: string;
+	}>(
+		`SELECT a.surah_id, s.name_ar, a.ayah_number, a.text_original, a.text_simple
+		 FROM ayah a
+		 JOIN surah s ON a.surah_id = s.id
+		 WHERE a.text_original LIKE ? OR a.text_simple LIKE ?
+		 ORDER BY a.surah_id, a.ayah_number`,
+		[pattern, pattern]
+	);
+	return rows.map((r) => ({
+		surahNumber: r.surah_id,
+		surahNameArabic: r.name_ar,
+		verseNumber: r.ayah_number,
+		textArabic: r.text_original,
+		textSimple: r.text_simple
+	}));
+}
+
 function mapWordWithTranslationRow(row: WordWithTranslationRow): WordWithTranslation {
 	return {
 		id: row.id,
